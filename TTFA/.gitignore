@@ -1,0 +1,40 @@
+# LaTeX compilation output (keep PDF)
+*.aux
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.synctex(busy)
+*.bbl
+*.blg
+*.bcf
+*.run.xml
+*.idx
+*.ilg
+*.ind
+*.nav
+*.snm
+*.vrb
+*.dvi
+*.ps
+*.xdv
+_minted-*/
+*.pytxcode
+
+# Office files
+*.xlsx
+*.xls
+*.pptx
+*.ppt
+*.docx
+*.doc
+
+# Claude Code
+CLAUDE.md
+
+# Keep PDFs
+!*.pdf
