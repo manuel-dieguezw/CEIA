@@ -10,24 +10,57 @@ En este capítulo se presenta el contexto general del trabajo, se describe el pr
 
 \section{Reconocimiento automático de modulaciones}
 
-El reconocimiento automático de modulaciones (AMC, del inglés \textit{Automatic Modulation Classification}) es un problema fundamental en comunicaciones digitales que consiste en identificar el esquema de modulación de una señal recibida sin información previa sobre el emisor ni el canal de transmisión.
+El reconocimiento automático de modulaciones (AMC, del inglés \textit{Automatic Modulation Classification}) es un problema fundamental en comunicaciones digitales que consiste en identificar el esquema de modulación de una señal recibida sin información previa sobre el emisor ni el canal de transmisión \cite{zhu2015automatic}.
 Entre sus aplicaciones se destacan el monitoreo del espectro radioeléctrico, la detección de emisores no autorizados, la radio cognitiva y las comunicaciones en entornos adversos \cite{dobre2007survey}.
 
 Un sistema de AMC recibe como entrada muestras de una señal de radio digital en formato IQ, es decir, sus componentes en fase (I) y cuadratura (Q), y produce como salida la etiqueta del esquema de modulación identificado. El procesamiento se divide en cuatro etapas secuenciales: adquisición de la señal, preprocesamiento, clasificación mediante un modelo de aprendizaje automático y asignación de la etiqueta de modulación. Esta arquitectura de procesamiento permite configurar al receptor para demodular la señal según la modulación identificada.
 
-La relación señal a ruido (SNR, del inglés \textit{Signal-to-Noise Ratio}) es la variable que más condiciona el desempeño de los sistemas de AMC. A niveles de SNR elevados (por encima de 0 dB), las distintas modulaciones presentan características diferenciables que permiten una clasificación precisa. A niveles bajos de SNR (por debajo de -10 dB), la señal es prácticamente indistinguible del ruido y la tarea de clasificación se vuelve muy difícil para cualquier método conocido \cite{oshea2018over}.
+En la figura \ref{fig:pipeline_amc} se puede observar un diagrama de bloques del sistema de AMC.
+
+\begin{figure}[htbp]
+\centering
+\resizebox{\linewidth}{!}{%
+\begin{tikzpicture}[
+    node distance=0.6cm,
+    block/.style={
+        rectangle, rounded corners=4pt,
+        minimum width=2.8cm, minimum height=1.1cm,
+        text centered, text width=2.6cm,
+        draw=black!60, fill=black!5,
+        font=\small
+    },
+    arrow/.style={-{Stealth[length=5pt]}, thick}
+]
+\node (acq)  [block]                          {Adquisición \\ \scriptsize{Muestras IQ}};
+\node (pre)  [block, right=of acq, minimum width=3.4cm, text width=3.2cm]  {Preprocesamiento};
+\node (cls)  [block, right=of pre]            {Clasificación \\ \scriptsize{Modelo ML}};
+\node (in)   [left=0.8cm of acq,  align=center, font=\small] {Señal\\de radio};
+\node (out)  [right=0.8cm of cls, align=center, font=\small] {Etiqueta de\\modulación};
+\draw [arrow] (in)  -- (acq);
+\draw [arrow] (acq) -- (pre);
+\draw [arrow] (pre) -- (cls);
+\draw [arrow] (cls) -- (out);
+\end{tikzpicture}%
+}
+\caption{Diagrama de bloques del sistema de AMC.}
+\label{fig:pipeline_amc}
+\end{figure}
+
+La relación señal a ruido (SNR, del inglés \textit{Signal-to-Noise Ratio}) es la variable que más condiciona el desempeño de los sistemas de AMC \cite{zhu2015automatic,proakis2008digital}. A niveles de SNR elevados (por encima de 0 dB), las distintas modulaciones presentan características diferenciables que permiten una clasificación precisa. A niveles bajos de SNR (por debajo de -10 dB), la señal es prácticamente indistinguible del ruido y la tarea de clasificación se vuelve muy difícil para cualquier método conocido \cite{oshea2018over}.
 
 %----------------------------------------------------------------------------------------
 
 \section{Contexto y motivación}
 
-Los métodos tradicionales de AMC se basan en el análisis manual de características de la señal, tales como la transformada de Fourier, la autocorrelación, estadísticas de la envolvente y momentos de orden superior. Estos métodos fueron diseñados para subconjuntos específicos de modulaciones y su desempeño se degrada significativamente en condiciones de baja SNR. Además, requieren un diseño ad hoc para cada nuevo esquema de modulación, lo que limita su escalabilidad \cite{dobre2007survey}.
+Los métodos tradicionales de AMC se basan en el análisis manual de características de la señal, tales como la transformada de Fourier, la autocorrelación, estadísticas de la envolvente y momentos de orden superior \cite{zhu2015automatic}. Estos métodos fueron diseñados para subconjuntos específicos de modulaciones y su desempeño se degrada significativamente en condiciones de baja SNR. Además, requieren un diseño ad hoc para cada nuevo esquema de modulación, lo que limita su escalabilidad \cite{dobre2007survey}.
+
+Los métodos clásicos de AMC se agrupan en dos categorías: los basados en verosimilitud, que formulan la clasificación como un problema de decisión sobre la función de verosimilitud de la señal recibida, y los basados en características, que extraen atributos de la señal para clasificarla \cite{dobre2007survey}. Estos últimos utilizan, por ejemplo, características de momentos cíclicos combinadas con clasificadores como árboles de decisión, vecinos más cercanos o máquinas de vectores de soporte \cite{oshea2016convolutional}. Su desempeño requiere valores de SNR elevados: un algoritmo clásico de decisión alcanzó una tasa de éxito global superior al 94\% a 15 dB de SNR \cite{nandi1998algorithms}. A bajo SNR, las redes convolucionales superaron a los clasificadores basados en características por entre 2,5 y 5 dB de SNR, mientras que por encima de 5 dB el desempeño fue similar \cite{oshea2016convolutional}. A cambio, los enfoques de aprendizaje profundo aprenden representaciones directamente de las muestras IQ sin extracción manual de características, pero se les critica habitualmente su demanda de recursos computacionales \cite{oshea2016convolutional}.
 
 El enfoque basado en aprendizaje profundo superó a los métodos clásicos y se convirtió en el paradigma dominante para AMC \cite{oshea2017introduction}. En particular, las redes neuronales convolucionales (CNN, del inglés \textit{Convolutional Neural Network}) que operan directamente sobre las muestras IQ crudas de la señal lograron superar el desempeño de los métodos basados en características manuales \cite{oshea2016convolutional}. Esta ventaja se hace especialmente evidente en condiciones de SNR moderado a alto.
 
 Sin embargo, la búsqueda de mayor exactitud llevó al desarrollo de arquitecturas de creciente complejidad, con modelos cuya cantidad de parámetros hace inviable su implementación dentro de un procesador que pueda utilizarse en aplicaciones de radiofrecuencia en tiempo real. Esto genera una tensión fundamental: los modelos más precisos son computacionalmente inviables para su implementación en hardware de tiempo real, que es precisamente el entorno donde AMC tiene sus aplicaciones más directas.
 
-La propuesta de valor de este trabajo reside en buscar la mejor relación entre complejidad del modelo y exactitud de clasificación. Se investigaron diferentes arquitecturas de aprendizaje profundo con el objetivo de identificar cuál ofrece el mejor equilibrio entre desempeño y cantidad de parámetros, de modo que el modelo resultante pueda ser llevado a sistemas con recursos computacionales limitados, como puede ser un sistema embebido o una radio definida por software (SDR, del inglés \textit{Software Defined Radio}).
+La propuesta de valor de este trabajo reside en buscar la mejor relación entre complejidad del modelo y exactitud de clasificación. Se investigaron diferentes arquitecturas de aprendizaje profundo con el objetivo de identificar cuál ofrece el mejor equilibrio entre desempeño y cantidad de parámetros, de modo que el modelo resultante pueda ser llevado a sistemas con recursos computacionales limitados, como puede ser un sistema embebido o una radio definida por software (SDR, del inglés \textit{Software Defined Radio}) \cite{mitola1995software}.
 
 El presente trabajo es de carácter personal y académico y no involucra acuerdos de confidencialidad ni financiamiento externo.
 
@@ -38,7 +71,7 @@ El presente trabajo es de carácter personal y académico y no involucra acuerdo
 
 El estado del arte actual en AMC está dominado por métodos de aprendizaje profundo que operan directamente sobre las muestras IQ de la señal, sin extracción manual de características. Este enfoque supera sistemáticamente a los métodos clásicos basados en estadísticas de la señal, especialmente en condiciones de SNR moderado a alto.
 
-Entre las arquitecturas de redes neuronales más utilizadas para AMC se encuentran las redes convolucionales (CNN), las redes recurrentes tipo LSTM (del inglés \textit{Long Short-Term Memory}) y GRU (del inglés \textit{Gated Recurrent Unit}), y las redes convolucionales temporales (TCN, del inglés \textit{Temporal Convolutional Network}). Cada arquitectura explota diferentes propiedades de la señal: las CNN capturan patrones locales en las muestras IQ, las redes recurrentes modelan dependencias temporales a largo plazo, y las TCN combinan la capacidad de procesamiento paralelo de las CNN con un campo receptivo extendido mediante convoluciones dilatadas \cite{oshea2016convolutional,peng2019modulation,kim2018automatic}.
+Entre las arquitecturas de redes neuronales más utilizadas para AMC se encuentran las redes convolucionales, las redes recurrentes tipo LSTM (del inglés \textit{Long Short-Term Memory}) y GRU (del inglés \textit{Gated Recurrent Unit}), y las redes convolucionales temporales (TCN, del inglés \textit{Temporal Convolutional Network}). Cada arquitectura explota diferentes propiedades de la señal: las CNN capturan patrones locales en las muestras IQ, las redes recurrentes modelan dependencias temporales a largo plazo, y las TCN combinan la capacidad de procesamiento paralelo de las CNN con un campo receptivo extendido mediante convoluciones dilatadas \cite{oshea2016convolutional,peng2019modulation,kim2018automatic}.
 
 Los modelos actuales logran una exactitud promedio superior al 80\% en condiciones de SNR de 0 dB en adelante cuando se evalúan sobre el dataset RadioML 2016.10a, que es el conjunto de datos de referencia más utilizado en la literatura \cite{oshea2016convolutional,oshea2018over}. Sin embargo, el desempeño cae drásticamente por debajo de ese umbral de SNR, lo que indica que el problema de clasificación a bajo SNR permanece abierto \cite{oshea2018over}.
 
@@ -49,18 +82,18 @@ Los modelos actuales logran una exactitud promedio superior al 80\% en condicion
 \section{Objetivos del trabajo}
 \label{sec:objetivos}
 
-El objetivo general del trabajo fue desarrollar un sistema de clasificación automática de modulaciones de señales de radio que ofrezca la mejor relación entre exactitud de clasificación y complejidad algorítmica, con el fin de identificar modelos viables para su implementación en sistemas con recursos computacionales limitados.
+El objetivo general del trabajo consiste en desarrollar un sistema de clasificación automática de modulaciones de señales de radio que ofrezca la mejor relación entre exactitud de clasificación y complejidad algorítmica, con el fin de identificar modelos viables para su implementación en sistemas con recursos computacionales limitados.
 
 Para alcanzar este objetivo se definieron los siguientes objetivos específicos:
 
 \begin{itemize}
-\item Se realizó un análisis exploratorio del dataset RadioML 2016.10a, que incluyó la visualización de señales en el plano IQ por clase de modulación, el análisis espectral de las distintas modulaciones y el estudio de la separabilidad de clases en función del nivel de SNR.
-\item Se preprocesaron las muestras IQ mediante normalización y se dividió el dataset en conjuntos de entrenamiento, validación y prueba, manteniendo la distribución de clases y niveles de SNR.
-\item Se investigaron, diseñaron e implementaron arquitecturas de redes neuronales aplicables al problema de AMC, incluyendo CNN, LSTM, GRU, TCN y ULCNN, evaluadas tanto sobre las representaciones IQ crudas como sobre la representación en amplitud y fase.
-\item Se entrenaron los modelos y se ajustaron sus hiperparámetros, con análisis del impacto del aumento de datos y del uso de scheduler de tasa de aprendizaje.
-\item Se evaluó el desempeño de los modelos mediante métricas de exactitud global, exactitud en función del nivel de SNR, matriz de confusión, y cantidad de parámetros del modelo.
-\item Se realizó un análisis comparativo de todas las arquitecturas evaluadas considerando el compromiso entre exactitud y complejidad algorítmica.
-\item Se analizaron las limitaciones del sistema desarrollado, incluyendo su comportamiento a bajo SNR y las restricciones derivadas del carácter sintético del dataset.
+\item Analizar el dataset RadioML 2016.10a mediante la visualización de señales en el plano IQ por clase de modulación, el análisis espectral de las distintas modulaciones y el estudio de la separabilidad de clases en función del nivel de SNR.
+\item Preprocesar las muestras IQ mediante normalización y dividir el dataset en conjuntos de entrenamiento, validación y prueba, manteniendo la distribución de clases y niveles de SNR.
+\item Investigar, diseñar e implementar arquitecturas de redes neuronales aplicables al problema de AMC, incluyendo CNN, LSTM, GRU y TCN, evaluadas tanto sobre las representaciones IQ crudas como sobre la representación en amplitud y fase.
+\item Entrenar los modelos y ajustar sus hiperparámetros, analizando el impacto del aumento de datos y del uso de scheduler de tasa de aprendizaje.
+\item Evaluar el desempeño de los modelos mediante métricas de exactitud global, exactitud en función del nivel de SNR, matriz de confusión y cantidad de parámetros del modelo.
+\item Comparar las arquitecturas evaluadas considerando el compromiso entre exactitud y complejidad algorítmica.
+\item Analizar las limitaciones del sistema desarrollado, incluyendo su comportamiento a bajo SNR y las restricciones derivadas del carácter sintético del dataset.
 \end{itemize}
 
-El alcance del trabajo no incluyó la implementación del modelo en hardware de tiempo real (FPGA, microcontrolador u otros dispositivos embebidos), la prueba con señales reales capturadas mediante un receptor SDR, la medición de tiempos de inferencia en hardware específico ni el despliegue del modelo en un entorno de producción. El análisis de complejidad se limitó a la comparación del número de parámetros de cada arquitectura.
+El alcance del trabajo no incluye la implementación del modelo en hardware de tiempo real (FPGA, microcontrolador u otros dispositivos embebidos), la prueba con señales reales capturadas mediante un receptor SDR, la medición de tiempos de inferencia en hardware específico ni el despliegue del modelo en un entorno de producción. El análisis de complejidad se limita a la comparación del número de parámetros de cada arquitectura.
