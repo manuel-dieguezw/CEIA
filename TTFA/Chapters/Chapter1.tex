@@ -46,6 +46,8 @@ En la figura \ref{fig:pipeline_amc} se puede observar un diagrama de bloques del
 \label{fig:pipeline_amc}
 \end{figure}
 
+La señal recibida se modela en banda base como $r(t) = s(t)\,c + n(t)$, donde $s(t)$ es la señal transmitida, $c$ es un término de pérdida de trayecto o ganancia constante y $n(t)$ es ruido blanco gaussiano aditivo \cite{oshea2016convolutional}. Esta expresión simplificada se utiliza ampliamente para desarrollar características y estadísticos de decisión, pero en los sistemas reales intervienen además efectos difíciles de modelar, como la deriva aleatoria del oscilador local, el remuestreo por el reloj del receptor y la convolución con una respuesta al impulso del canal variable en el tiempo \cite{oshea2016convolutional}. Cada muestra de $r(t)$ es un número complejo, que se representa mediante sus componentes I y Q o, de forma equivalente, mediante la amplitud $A$ y la fase $\phi$ instantáneas, con $I = A\cos\phi$ y $Q = A\sin\phi$ \cite{rajendran2018distributed}.
+
 La relación señal a ruido (SNR, del inglés \textit{Signal-to-Noise Ratio}) es la variable que más condiciona el desempeño de los sistemas de AMC \cite{zhu2015automatic,proakis2008digital}. A niveles de SNR elevados (por encima de 0 dB), las distintas modulaciones presentan características diferenciables que permiten una clasificación precisa. A niveles bajos de SNR (por debajo de -10 dB), la señal es prácticamente indistinguible del ruido y la tarea de clasificación se vuelve muy difícil para cualquier método conocido \cite{oshea2018over}.
 
 %----------------------------------------------------------------------------------------
@@ -55,6 +57,8 @@ La relación señal a ruido (SNR, del inglés \textit{Signal-to-Noise Ratio}) es
 Los métodos tradicionales de AMC se basan en el análisis manual de características de la señal, tales como la transformada de Fourier, la autocorrelación, estadísticas de la envolvente y momentos de orden superior \cite{zhu2015automatic}. Estos métodos fueron diseñados para subconjuntos específicos de modulaciones y su desempeño se degrada significativamente en condiciones de baja SNR. Además, requieren un diseño ad hoc para cada nuevo esquema de modulación, lo que limita su escalabilidad \cite{dobre2007survey}.
 
 Los métodos clásicos de AMC se agrupan en dos categorías: los basados en verosimilitud, que formulan la clasificación como un problema de decisión sobre la función de verosimilitud de la señal recibida, y los basados en características, que extraen atributos de la señal para clasificarla \cite{dobre2007survey}. Estos últimos utilizan, por ejemplo, características de momentos cíclicos combinadas con clasificadores como árboles de decisión, vecinos más cercanos o máquinas de vectores de soporte \cite{oshea2016convolutional}. Su desempeño requiere valores de SNR elevados: un algoritmo clásico de decisión alcanzó una tasa de éxito global superior al 94\% a 15 dB de SNR \cite{nandi1998algorithms}. A bajo SNR, las redes convolucionales superaron a los clasificadores basados en características por entre 2,5 y 5 dB de SNR, mientras que por encima de 5 dB el desempeño fue similar \cite{oshea2016convolutional}. A cambio, los enfoques de aprendizaje profundo aprenden representaciones directamente de las muestras IQ sin extracción manual de características, pero se les critica habitualmente su demanda de recursos computacionales \cite{oshea2016convolutional}.
+
+Dentro de los métodos clásicos, los de decisión teórica plantean la clasificación como un problema de prueba de hipótesis múltiples y son óptimos en el sentido de minimizar la probabilidad de clasificación errónea. Sin embargo, sus implementaciones prácticas son costosas computacionalmente, porque suelen requerir almacenar una gran cantidad de muestras, y no son robustos ante condiciones de canal desconocidas ni ante discrepancias del receptor como el desplazamiento de la frecuencia del reloj \cite{rajendran2018distributed}. En los métodos basados en características, la selección manual de estas es una tarea tediosa que dificulta modelar todas las discrepancias del canal \cite{rajendran2018distributed}.
 
 El enfoque basado en aprendizaje profundo superó a los métodos clásicos y se convirtió en el paradigma dominante para AMC \cite{oshea2017introduction}. En particular, las redes neuronales convolucionales (CNN, del inglés \textit{Convolutional Neural Network}) que operan directamente sobre las muestras IQ crudas de la señal lograron superar el desempeño de los métodos basados en características manuales \cite{oshea2016convolutional}. Esta ventaja se hace especialmente evidente en condiciones de SNR moderado a alto.
 
@@ -75,7 +79,30 @@ Entre las arquitecturas de redes neuronales más utilizadas para AMC se encuentr
 
 Los modelos actuales logran una exactitud promedio superior al 80\% en condiciones de SNR de 0 dB en adelante cuando se evalúan sobre el dataset RadioML 2016.10a, que es el conjunto de datos de referencia más utilizado en la literatura \cite{oshea2016convolutional,oshea2018over}. Sin embargo, el desempeño cae drásticamente por debajo de ese umbral de SNR, lo que indica que el problema de clasificación a bajo SNR permanece abierto \cite{oshea2018over}.
 
-% TODO: agregar tabla comparativa de enfoques con referencias bibliográficas
+Entre los trabajos recientes, se propuso transformar las señales en diagramas de ojo, separar sus componentes I y Q y clasificarlas con redes convolucionales (ResNet-18, ResNet-50 y MobileNetV2) sobre un conjunto de datos sintético de 14 modulaciones con SNR de -20 a 30 dB \cite{rehman2025dlamc}. Los autores reportaron una exactitud de 93,6\% a -20 dB de SNR, superior a la informada para modelos previos basados en redes de creencia profunda, redes recurrentes, LSTM y CLDNN, aunque con un costo computacional elevado \cite{rehman2025dlamc}.
+
+Para las redes recurrentes, se propuso un modelo LSTM de dos capas que recibe la amplitud y la fase de la señal en el dominio del tiempo, sin características diseñadas por expertos, y que alcanzó una exactitud promedio cercana al 90\% para SNR de 0 a 20 dB sobre RadioML 2016.10a \cite{rajendran2018distributed}. Los autores informaron que alimentar el LSTM con muestras IQ directamente dejó la exactitud constante en 9\%, mientras que la amplitud y la fase normalizadas dieron buenos resultados, y que alimentar la CNN con amplitud y fase no mejoró su exactitud respecto de la CNN con muestras IQ \cite{rajendran2018distributed}.
+
+Las redes convolucionales temporales se aplicaron a AMC sobre muestras IQ crudas, con convoluciones causales dilatadas cuyo factor de dilatación crece con la profundidad y que amplían el campo receptivo sin requerir muchas capas \cite{ghasemi2019spectrum}. Sobre un subconjunto de 8 modulaciones digitales, con vectores de 128 muestras la TCN tuvo un desempeño similar al de una red CLDNN, con una leve ventaja a SNR altos. Con vectores de 1024 muestras, regenerados a partir de RadioML, la TCN superó a la CLDNN para SNR superiores a -18 dB y alcanzó una exactitud del 100\% para SNR mayores a 0 dB \cite{ghasemi2019spectrum}.
+
+En la tabla \ref{tab:enfoquesAMC} se resumen los enfoques descritos, con la representación de entrada que utilizaron y el resultado que cada fuente reportó. Los valores no son directamente comparables entre sí, porque los conjuntos de datos y las condiciones de evaluación de cada trabajo son distintos.
+
+\begin{table}[h]
+	\centering
+	\caption{Enfoques de AMC y resultados reportados en la literatura.}
+	\begin{tabular}{p{3.1cm} p{2.6cm} p{4.9cm} l}
+		\toprule
+		\textbf{Enfoque} & \textbf{Entrada} & \textbf{Resultado reportado} & \textbf{Fuente} \\
+		\midrule
+		Árbol de decisión, vecinos más cercanos y SVM & Características de momentos cíclicos & Superados por la CNN por entre 2,5 y 5 dB de SNR & \cite{oshea2016convolutional} \\
+		CNN & Muestras IQ & Ventaja sobre las características de expertos a bajo SNR, sobre un dataset de 11 modulaciones & \cite{oshea2016convolutional} \\
+		LSTM de dos capas & Amplitud y fase & Exactitud promedio cercana al 90\% para SNR de 0 a 20 dB, sobre RadioML 2016.10a & \cite{rajendran2018distributed} \\
+		TCN & Muestras IQ & Exactitud del 100\% para SNR mayores a 0 dB, con 8 modulaciones y 1024 muestras por vector & \cite{ghasemi2019spectrum} \\
+		CNN (ResNet-18, ResNet-50 y MobileNetV2) & Diagramas de ojo & Exactitud del 93,6\% a -20 dB, sobre un dataset de 14 modulaciones & \cite{rehman2025dlamc} \\
+		\bottomrule
+	\end{tabular}
+	\label{tab:enfoquesAMC}
+\end{table}
 
 %----------------------------------------------------------------------------------------
 

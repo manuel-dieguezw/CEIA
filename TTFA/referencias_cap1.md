@@ -99,3 +99,25 @@ Usar para: afirmación 9 (estado del arte dominado por DL), motivación de SDR.
 - [ ] Agregar tabla comparativa en sección 1.3 (TODO en Chapter1.tex)
 - [ ] Escribir resumen (abstract) — entrega máx. 02/NOV
 - [ ] Completar portada.tex con título, autor, director, codirector
+
+## Estado del arte: DL-AMC (agregado 10/NOV)
+
+- Referencia: F. U. Rehman, Q. Abbas y M. K. Shehzad, "DL-AMC: Deep Learning for Automatic Modulation Classification", arXiv:2504.08011, v1, 10 abr 2025. DOI 10.48550/arXiv.2504.08011. Clave: `rehman2025dlamc`.
+- Estado: leída completa. Preprint sin revisión verificable.
+- Diagramas de ojo separados en I y Q: sec. II-A, p. 2, Fig. 1 (p. 3).
+- ResNet-18, ResNet-50 y MobileNetV2: abstract y sec. II-B, p. 2-3.
+- 14 modulaciones, 420x10^3 tramas, SNR de -20 a 30 dB: sec. II-C, p. 3-4 (nota al pie 3).
+- 93,6% a -20 dB frente a DBN 10%, RNN 48%, LSTM 12% y CLDNN 12%: sec. III-A, p. 4.
+- Advertencia: sus referencias [13] y [14] (RNN y LSTM) son trabajos de predicción de canal MIMO.
+
+## Agregadas el 10/NOV (leídas completas)
+
+- `rajendran2018distributed`: S. Rajendran, W. Meert, D. Giustiniano, V. Lenders y S. Pollin, "Deep Learning Models for Wireless Signal Classification with Distributed Low-Cost Spectrum Sensors", arXiv:1707.08908 v2, 2018.
+  - Decisión teórica óptima pero costosa, sin robustez ante canal desconocido; selección manual de características tediosa: sec. I, p. 1-2.
+  - I = A cos(phi), Q = A sin(phi): sec. II, p. 3.
+  - LSTM de 2 capas sobre amplitud y fase, ~90% de 0 a 20 dB: abstract y sec. V-A, p. 5.
+  - LSTM con IQ queda en 9%; CNN con amplitud/fase no mejora: sec. V-A, p. 6.
+- `ghasemi2019spectrum`: A. Ghasemi, C. Parekh y P. Guinand, "Spectrum Awareness Under Co-Channel Usage Via Deep Temporal Convolutional Networks", Communications Research Centre, Ottawa, 2019 (congreso no confirmado).
+  - Convoluciones causales dilatadas, campo receptivo mayor con pocas capas: sec. III, p. 2, Fig. 1.
+  - 128 muestras: desempeño similar a CLDNN; 1024 muestras: mejor que CLDNN sobre -18 dB y 100% sobre 0 dB: sec. IV-A, p. 3, Fig. 3 y 4.
+- `oshea2016convolutional` (releída): modelo de señal r(t) = s(t) c + n(t), sec. 2, p. 2; efectos reales, p. 2-3.

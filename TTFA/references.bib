@@ -161,6 +161,29 @@
     year    = {1998},
 }
 
+@misc{rehman2025dlamc,
+    author = {F. U. Rehman and Q. Abbas and M. K. Shehzad},
+    title  = {{DL-AMC}: Deep Learning for Automatic Modulation Classification},
+    year   = {2025},
+    note   = {arXiv:2504.08011},
+    doi    = {10.48550/arXiv.2504.08011},
+}
+
+@misc{rajendran2018distributed,
+    author = {S. Rajendran and W. Meert and D. Giustiniano and V. Lenders and S. Pollin},
+    title  = {Deep Learning Models for Wireless Signal Classification with Distributed Low-Cost Spectrum Sensors},
+    year   = {2018},
+    note   = {arXiv:1707.08908, v2},
+    doi    = {10.48550/arXiv.1707.08908},
+}
+
+@misc{ghasemi2019spectrum,
+    author       = {A. Ghasemi and C. Parekh and P. Guinand},
+    title        = {Spectrum Awareness Under Co-Channel Usage Via Deep Temporal Convolutional Networks},
+    year         = {2019},
+    howpublished = {Communications Research Centre, Ottawa. \url{https://winnforum.org/assets/Proceedings/2019/TS3.3\%20Ghasemi\%20paper.pdf}},
+}
+
 @book{zhu2015automatic,
     author    = {Z. Zhu and A. K. Nandi},
     title     = {Automatic Modulation Classification: Principles, Algorithms and Applications},
@@ -227,6 +250,115 @@
     pages   = {563--575},
     year    = {2017},
     doi     = {10.1109/TCCN.2017.2758370},
+}
+
+% ============================================================
+% Referencias Capítulo 2 — Herramientas, dataset e infraestructura
+% (verificadas leyendo la fuente; ver referencias_cap2.md)
+% ============================================================
+
+@inproceedings{paszke2019pytorch,
+    author    = {A. Paszke and S. Gross and F. Massa and A. Lerer and J. Bradbury and G. Chanan and T. Killeen and Z. Lin and N. Gimelshein and L. Antiga and A. Desmaison and A. K{\"o}pf and E. Yang and Z. DeVito and M. Raison and A. Tejani and S. Chilamkurthy and B. Steiner and L. Fang and J. Bai and S. Chintala},
+    title     = {{PyTorch}: An imperative style, high-performance deep learning library},
+    booktitle = {Advances in Neural Information Processing Systems 32 (NeurIPS 2019)},
+    year      = {2019},
+    note      = {arXiv:1912.01703},
+}
+
+@article{pedregosa2011scikit,
+    author  = {F. Pedregosa and G. Varoquaux and A. Gramfort and V. Michel and B. Thirion and O. Grisel and M. Blondel and P. Prettenhofer and R. Weiss and V. Dubourg and J. Vanderplas and A. Passos and D. Cournapeau and M. Brucher and M. Perrot and {\'E}. Duchesnay},
+    title   = {Scikit-learn: Machine learning in {Python}},
+    journal = {Journal of Machine Learning Research},
+    volume  = {12},
+    number  = {85},
+    pages   = {2825--2830},
+    year    = {2011},
+}
+
+@article{waskom2021seaborn,
+    author  = {M. L. Waskom},
+    title   = {seaborn: statistical data visualization},
+    journal = {Journal of Open Source Software},
+    volume  = {6},
+    number  = {60},
+    pages   = {3021},
+    year    = {2021},
+    doi     = {10.21105/joss.03021},
+}
+
+@incollection{kluyver2016jupyter,
+    author    = {T. Kluyver and B. Ragan-Kelley and F. P{\'e}rez and B. Granger and M. Bussonnier and J. Frederic and K. Kelley and J. Hamrick and J. Grout and S. Corlay and P. Ivanov and D. Avila and S. Abdalla and C. Willing and {Jupyter Development Team}},
+    title     = {Jupyter Notebooks - a publishing format for reproducible computational workflows},
+    booktitle = {Positioning and Power in Academic Publishing: Players, Agents and Agendas},
+    publisher = {IOS Press},
+    pages     = {87--90},
+    year      = {2016},
+    doi       = {10.3233/978-1-61499-649-1-87},
+    note      = {A\~no a confirmar en la fuente},
+}
+
+@misc{deepsig2016datasets,
+    author       = {{DeepSig Inc.}},
+    title        = {Datasets: {RadioML} 2016.10A},
+    howpublished = {\url{https://www.deepsig.ai/datasets}},
+    note         = {Acceso: 9 de noviembre de 2026},
+}
+
+@misc{flowers2019rfml,
+    author       = {B. Flowers and W. C. Headley},
+    title        = {Radio Frequency Machine Learning ({RFML}) in {PyTorch}},
+    howpublished = {Repositorio de GitHub, \url{https://github.com/brysef/rfml}},
+    note         = {Acceso: 9 de noviembre de 2026. Licencia BSD-3-Clause},
+}
+
+@misc{polars2026docs,
+    author       = {{Polars}},
+    title        = {Polars: documentaci{\'o}n oficial},
+    howpublished = {\url{https://docs.pola.rs/}},
+    note         = {Acceso: 9 de noviembre de 2026},
+}
+
+@misc{python2026about,
+    author       = {{Python Software Foundation}},
+    title        = {About {Python}},
+    howpublished = {\url{https://www.python.org/about/}},
+    note         = {Acceso: 9 de noviembre de 2026},
+}
+
+@misc{microsoft2026directml,
+    author       = {{Microsoft}},
+    title        = {Enable {PyTorch} with {DirectML} on {Windows}},
+    howpublished = {\url{https://learn.microsoft.com/en-us/windows/ai/directml/gpu-pytorch-windows}},
+    note         = {Acceso: 9 de noviembre de 2026},
+}
+
+@misc{microsoft2024torchdirectml,
+    author       = {{Microsoft}},
+    title        = {torch-directml 0.2.5.dev240914},
+    howpublished = {Python Package Index, \url{https://pypi.org/project/torch-directml/}},
+    note         = {Acceso: 9 de noviembre de 2026},
+}
+
+@misc{amd2025pytorchdirectml,
+    author       = {{AMD Research}},
+    title        = {Setting {PyTorch} environment for {GPU} ({Windows})},
+    howpublished = {AUP AI Tutorials, \url{https://amdresearch.github.io/aup-ai-tutorials/env/env-gpu-windows.html}},
+    year         = {2025},
+    note         = {Acceso: 9 de noviembre de 2026},
+}
+
+@misc{pytorch2026docs,
+    author       = {{PyTorch Contributors}},
+    title        = {{PyTorch} documentation (versi{\'o}n 2.15)},
+    howpublished = {\url{https://docs.pytorch.org/docs/2.15/index.html}},
+    note         = {Acceso: 9 de noviembre de 2026. P{\'a}ginas consultadas: nn, optim y data},
+}
+
+@misc{sklearn2026docs,
+    author       = {{scikit-learn developers}},
+    title        = {scikit-learn documentation (versi{\'o}n 1.9.1)},
+    howpublished = {\url{https://scikit-learn.org/stable/}},
+    note         = {Acceso: 9 de noviembre de 2026. P{\'a}ginas consultadas: SVM, preprocesamiento, Pipeline y GridSearchCV},
 }
 
 % ============================================================
